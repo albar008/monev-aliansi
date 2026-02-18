@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Box, Typography, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, FormControlLabel, Checkbox, Chip, Alert, Select, FormControl, InputLabel } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -6,10 +6,8 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import api from '../services/api';
-import { useAuth } from '../context/AuthContext';
 
 const StatusLaporanMK = () => {
-  const { isAdmin } = useAuth();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [years, setYears] = useState([]);
@@ -44,7 +42,7 @@ const StatusLaporanMK = () => {
     }
   };
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const params = selectedYear ? { tahun: selectedYear } : {};
@@ -56,7 +54,7 @@ const StatusLaporanMK = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedYear]);
 
   useEffect(() => {
     fetchYears();
@@ -64,7 +62,7 @@ const StatusLaporanMK = () => {
 
   useEffect(() => {
     fetchData();
-  }, [selectedYear]);
+  }, [selectedYear, fetchData]);
 
   const showAlert = (message, severity = 'success') => {
     setAlert({ show: true, severity, message });

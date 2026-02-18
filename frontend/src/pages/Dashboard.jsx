@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Grid,
@@ -17,7 +17,7 @@ import {
   Chip,
   Button,
 } from "@mui/material";
-import { Bar, Doughnut, Line } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -26,7 +26,6 @@ import {
   Title,
   Tooltip,
   Legend,
-  ArcElement,
   PointElement,
   LineElement,
 } from "chart.js";
@@ -34,19 +33,14 @@ import InboxIcon from "@mui/icons-material/Inbox";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import ImageIcon from "@mui/icons-material/Image";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
-import RefreshIcon from "@mui/icons-material/Refresh";
 import FolderIcon from "@mui/icons-material/Folder";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import StorageIcon from "@mui/icons-material/Storage";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import PersonIcon from "@mui/icons-material/Person";
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
 
@@ -57,9 +51,59 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  ArcElement,
   PointElement,
   LineElement,
+);
+
+const StatCard = ({ title, value, subtitle, progress, progressColor, icon, iconColor }) => (
+  <Card sx={{ height: "100%", borderRadius: 2, boxShadow: 2 }}>
+    <CardContent>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          mb: 2,
+        }}
+      >
+        <Box>
+          <Typography variant="h6" fontWeight="bold">
+            {value}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {title}
+          </Typography>
+        </Box>
+        <Avatar sx={{ bgcolor: iconColor, width: 48, height: 48 }}>
+          {icon && <icon />}
+        </Avatar>
+      </Box>
+      {progress !== undefined && (
+        <Box sx={{ mt: 2 }}>
+          <Box
+            sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}
+          >
+            <Typography variant="caption" color="text.secondary">
+              {subtitle}
+            </Typography>
+            <Typography variant="caption" fontWeight="bold">
+              {progress}%
+            </Typography>
+          </Box>
+          <LinearProgress
+            variant="determinate"
+            value={progress}
+            sx={{
+              height: 6,
+              borderRadius: 3,
+              bgcolor: "grey.200",
+              "& .MuiLinearProgress-bar": { bgcolor: progressColor },
+            }}
+          />
+        </Box>
+      )}
+    </CardContent>
+  </Card>
 );
 
 const Dashboard = () => {
@@ -71,20 +115,16 @@ const Dashboard = () => {
     completed_projects: 0,
     total_nilai: 0,
   });
-  const [projectsPerMonth, setProjectsPerMonth] = useState({
+  const [_projectsPerMonth, setProjectsPerMonth] = useState({
     labels: [],
     data: [],
   });
-  const [porsiDistribution, setPorsiDistribution] = useState({
+  const [_porsiDistribution, setPorsiDistribution] = useState({
     labels: [],
     data: [],
   });
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     try {
       const [statsRes, projectsRes, porsiRes] = await Promise.all([
         api.get("/dashboard/stats"),
@@ -97,7 +137,11 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Failed to fetch dashboard data:", error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
   const formatCurrency = (value) =>
     new Intl.NumberFormat("id-ID", {
@@ -213,65 +257,6 @@ const Dashboard = () => {
     };
     return colors[status] || "default";
   };
-
-  const StatCard = ({
-    title,
-    value,
-    subtitle,
-    progress,
-    progressColor,
-    icon: Icon,
-    iconColor,
-  }) => (
-    <Card sx={{ height: "100%", borderRadius: 2, boxShadow: 2 }}>
-      <CardContent>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            mb: 2,
-          }}
-        >
-          <Box>
-            <Typography variant="h6" fontWeight="bold">
-              {value}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {title}
-            </Typography>
-          </Box>
-          <Avatar sx={{ bgcolor: iconColor, width: 48, height: 48 }}>
-            <Icon />
-          </Avatar>
-        </Box>
-        {progress !== undefined && (
-          <Box sx={{ mt: 2 }}>
-            <Box
-              sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}
-            >
-              <Typography variant="caption" color="text.secondary">
-                {subtitle}
-              </Typography>
-              <Typography variant="caption" fontWeight="bold">
-                {progress}%
-              </Typography>
-            </Box>
-            <LinearProgress
-              variant="determinate"
-              value={progress}
-              sx={{
-                height: 6,
-                borderRadius: 3,
-                bgcolor: "grey.200",
-                "& .MuiLinearProgress-bar": { bgcolor: progressColor },
-              }}
-            />
-          </Box>
-        )}
-      </CardContent>
-    </Card>
-  );
 
   return (
     <Box className="fade-in" sx={{ pb: 4 }}>

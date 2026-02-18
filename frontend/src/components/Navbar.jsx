@@ -43,11 +43,6 @@ const Navbar = ({ onToggleSidebar, sidebarMinimized, onToggleMobile }) => {
     navigate('/login');
   };
 
-  const handleLogout = async () => {
-    await logout();
-    navigate('/login');
-  };
-
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };

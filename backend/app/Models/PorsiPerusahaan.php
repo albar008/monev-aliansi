@@ -10,6 +10,8 @@ class PorsiPerusahaan extends Model
 {
     use HasFactory;
 
+    protected $table = 'porsi_perusahaan';
+
     protected $fillable = [
         'project_id',
         'nama_pemilik',
