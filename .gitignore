@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+frontend/dist/
+frontend/node_modules/
+
+# Laravel
+backend/bootstrap/cache/*
+backend/storage/logs/*
+backend/vendor/
+backend/.env
+backend/.env.*
+backend/phpunit.xml
+backend/composer.phar
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Cache
+.cache/
+.vite/
