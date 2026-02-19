@@ -1,10 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box } from '@mui/material';
 import { IDLE_WARNING } from '../config/idleConfig';
+import { useAuth } from '../context/AuthContext';
+import { useIdleTimeoutContext } from '../context/IdleTimeoutContext';
 
 export const IdleTimeoutWarning = () => {
+  const navigate = useNavigate();
+  const { clearUser } = useAuth();
+  const { triggerReset } = useIdleTimeoutContext();
   const [open, setOpen] = useState(false);
   const [remainingTime, setRemainingTime] = useState(IDLE_WARNING / 1000);
+
+  const handleLogout = useCallback(() => {
+    clearUser();
+    setOpen(false);
+    navigate('/login?reason=idle');
+  }, [clearUser, navigate]);
 
   useEffect(() => {
     const handleWarning = () => {
@@ -25,7 +37,7 @@ export const IdleTimeoutWarning = () => {
     const interval = setInterval(() => {
       setRemainingTime(prev => {
         if (prev <= 1) {
-          window.dispatchEvent(new CustomEvent('idle-timeout-logout'));
+          handleLogout();
           return 0;
         }
         return prev - 1;
@@ -33,17 +45,18 @@ export const IdleTimeoutWarning = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [open]);
+  }, [open, handleLogout]);
 
   const handleStayLoggedIn = () => {
+    triggerReset();
     setOpen(false);
-    window.dispatchEvent(new CustomEvent('idle-timeout-reset'));
+    setRemainingTime(IDLE_WARNING / 1000);
   };
 
   if (!open) return null;
 
   return (
-    <Dialog open={open} maxWidth="xs" fullWidth>
+    <Dialog open={open} maxWidth="xs" fullWidth disableEscapeKeyDown>
       <DialogTitle sx={{ textAlign: 'center', pb: 1 }}>
         <Box sx={{ fontSize: 48 }}>⏰</Box>
         <Typography variant="h6" fontWeight="bold">

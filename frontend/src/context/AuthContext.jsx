@@ -55,6 +55,12 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const clearUser = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+  };
+
   const updateProfile = async (data) => {
     const response = await api.put('/user/profile', data);
     setUser(response.data.user);
@@ -73,7 +79,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, isAdmin, hasPermission, checkAuth, updateProfile }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, clearUser, isAdmin, hasPermission, checkAuth, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );

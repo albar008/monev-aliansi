@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
+import { IdleTimeoutProvider } from './context/IdleTimeoutContext';
 import { useIdleTimeout } from './hooks/useIdleTimeout';
 import { IdleTimeoutWarning } from './components/IdleTimeoutWarning';
 import { Box, CircularProgress } from '@mui/material';
@@ -15,6 +16,14 @@ import MainLayout from './components/MainLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
+  return (
+    <IdleTimeoutProvider>
+      <AppContent />
+    </IdleTimeoutProvider>
+  );
+}
+
+function AppContent() {
   const { user, loading } = useAuth();
   const isAuthenticated = !!user;
   

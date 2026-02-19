@@ -6,6 +6,7 @@ import { Box, Paper, TextField, Button, InputAdornment, IconButton, Typography, 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -14,6 +15,10 @@ const Login = () => {
   const [captchaImage, setCaptchaImage] = useState('');
   const [captchaId, setCaptchaId] = useState('');
   const [error, setError] = useState('');
+  const [idleAlertOpen, setIdleAlertOpen] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('reason') === 'idle';
+  });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { login, user: authUser } = useAuth();
@@ -31,6 +36,16 @@ const Login = () => {
   useEffect(() => {
     loadCaptcha();
   }, []);
+
+  useEffect(() => {
+    if (idleAlertOpen) {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('reason')) {
+        url.searchParams.delete('reason');
+        window.history.replaceState({}, '', url.toString());
+      }
+    }
+  }, [idleAlertOpen]);
 
   const loadCaptcha = async () => {
     try {
@@ -77,6 +92,23 @@ const Login = () => {
             Silakan masuk untuk melanjutkan
           </Typography>
         </Box>
+
+        {idleAlertOpen && (
+          <Alert 
+            severity="warning" 
+            icon={<LogoutIcon />}
+            onClose={() => setIdleAlertOpen(false)}
+            sx={{ mb: 2 }}
+          >
+            <Typography variant="body2" fontWeight="medium">
+              Sesi Anda telah berakhir karena tidak ada aktivitas
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              Untuk keamanan akun, Anda akan otomatis logout setelah 30 menit tidak melakukan aktivitas. 
+              Silakan masuk kembali untuk melanjutkan.
+            </Typography>
+          </Alert>
+        )}
 
         {error && (
           <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>

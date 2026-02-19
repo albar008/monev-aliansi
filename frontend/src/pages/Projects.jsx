@@ -143,14 +143,25 @@ const Projects = () => {
     }
   };
 
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return '';
+      return date.toISOString().split('T')[0];
+    } catch {
+      return '';
+    }
+  };
+
   const handleEdit = (project) => {
     setEditingProject(project);
     setFormData({
       nama_proyek: project.nama_proyek,
       klien: project.klien || '',
       nilai_kontrak: project.nilai_kontrak || '',
-      tanggal_mulai: project.tanggal_mulai || '',
-      tanggal_selesai: project.tanggal_selesai || '',
+      tanggal_mulai: formatDateForInput(project.tanggal_mulai),
+      tanggal_selesai: formatDateForInput(project.tanggal_selesai),
       status: project.status,
       deskripsi: project.deskripsi || '',
     });
