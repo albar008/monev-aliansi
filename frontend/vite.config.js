@@ -12,4 +12,17 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-mui-core': ['@mui/material'],
+          'vendor-mui-icons': ['@mui/icons-material'],
+          'vendor-mui-datagrid': ['@mui/x-data-grid'],
+          'vendor-chart': ['chart.js', 'react-chartjs-2'],
+        },
+      },
+    },
+  },
 })

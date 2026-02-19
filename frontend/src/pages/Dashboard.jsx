@@ -8,6 +8,7 @@ import {
   Avatar,
   LinearProgress,
   IconButton,
+  Icon,
   Table,
   TableBody,
   TableCell,
@@ -75,7 +76,7 @@ const StatCard = ({ title, value, subtitle, progress, progressColor, icon, iconC
           </Typography>
         </Box>
         <Avatar sx={{ bgcolor: iconColor, width: 48, height: 48 }}>
-          {icon && <icon />}
+          {icon && <Icon component={icon} sx={{ color: 'white' }} />}
         </Avatar>
       </Box>
       {progress !== undefined && (
