@@ -1,5 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
+import { useIdleTimeout } from './hooks/useIdleTimeout';
+import { IdleTimeoutWarning } from './components/IdleTimeoutWarning';
 import { Box, CircularProgress } from '@mui/material';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -14,6 +16,9 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   const { user, loading } = useAuth();
+  const isAuthenticated = !!user;
+  
+  useIdleTimeout(isAuthenticated);
 
   if (loading) {
     return (
@@ -25,7 +30,9 @@ function App() {
 
   if (user) {
     return (
-      <Routes>
+      <>
+        <IdleTimeoutWarning />
+        <Routes>
         <Route path="/login" element={<Navigate to="/dashboard" replace />} />
         <Route element={<MainLayout />}>
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
@@ -39,6 +46,7 @@ function App() {
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
+      </>
     );
   }
 
