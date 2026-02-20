@@ -31,7 +31,7 @@ api.interceptors.response.use(
         isRedirecting = true;
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        window.location.href = '/login';
+        window.location.href = '/login?reason=idle';
       }
     }
     if (error.response?.status === 403 && !isRedirecting) {
