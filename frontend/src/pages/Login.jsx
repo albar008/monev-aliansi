@@ -80,21 +80,25 @@ const Login = () => {
       sx={{
         minHeight: '100vh',
         display: 'flex',
+        flexDirection: { xs: 'column', md: 'row' },
         background: 'linear-gradient(135deg, #0458b8 0%, #032a5e 100%)',
+        overflow: 'hidden',
       }}
     >
       <Box
         sx={{
-          flex: 1,
+          flex: { md: 1 },
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          p: 4,
+          p: { xs: 2, sm: 4 },
           bgcolor: '#fff',
+          minHeight: { xs: '100vh', md: 'auto' },
+          overflowY: 'auto',
         }}
       >
         <Box sx={{ width: '100%', maxWidth: 450 }}>
-          <Box sx={{ borderRadius: 2, p: 4 }}>
+          <Box sx={{ borderRadius: 2, p: { xs: 2, sm: 4 } }}>
             <Box sx={{ textAlign: 'center', mb: 4 }}>
               <Typography variant="h5" sx={{ fontWeight: 700, color: '#333', mb: 1 }}>
                 Login to Your Account
